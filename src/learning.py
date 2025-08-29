@@ -1,5 +1,6 @@
 # Here we can find all the learning models for this project 
 # aka logistic regression(binary and multiclass); naives bayes; and a neural networks.
+import json
 import numpy as np
 from tqdm import tqdm
 
@@ -127,6 +128,27 @@ class LogisticRegression:
         y_pred = self.predict(X)
         return np.mean(y_pred == y)
 
+    def save(self, vocab, filename):
+      
+      parameters = {
+        "weights": self.weights.tolist(),
+        "bias": self.bias.tolist(),
+        "vocab": vocab
+      }
+
+      # save to a json file 
+      with open("{}.json".format(filename), "w") as f:
+        json.dump(parameters, f)
+    
+    def load(self, filepath="LogisticRegression.json"):
+
+      with open(filepath, "r") as f:
+          parameters = json.load(f)
+
+      self.weights = np.array(parameters["weights"])
+      self.bias = np.array(parameters["bias"])
+      return parameters["vocab"]
+
 
 class GaussianNB:
 
@@ -195,22 +217,32 @@ class GaussianNB:
         log_pdf = first_part + second_part
         return log_pdf
     
-    def log_loss(self, X, y):
-        # compute the log_loss of the model for the sake of comparaison 
+    def log_loss(self, X, probs, y):
+        # compute the log_loss of the model for the sake of comparaison with other
         X = np.asarray(X)
         y = np.asarray(y)
-        # proba distribution
-        probs = self.predict_proba(X)   # 2d array of shape (n_samples, n_classes)
+
+        # proba distribution of the labels for each samples
+        # probs is an 2d array of shape (n_samples, n_classes)
         n_samples = X.shape[0]
 
-        # initialize loss_history
-        self.loss_history_ = []
-        for i in tqdm(range(n_samples)):
-            real_class = y[i]
+        # avoid log(0)
+        epsilon = 1e-12
+        np.clip(probs, epsilon, 1 - epsilon)
 
-            # we know that the real_class is mapped to 0, ..., n_classes thuus:
-            p = probs[i][real_class]    # the probability of predicting the real_class
-            self.loss_history_.append(-np.log(p) / n_samples)
+        # get the prob P(y|x) for each real class y
+        class_probs = probs[np.arrage(n_samples), y]  # shape (n_samples, 1)
+
+        # compute log_loss 
+        loss = -np.sum(np.log(class_probs)) / n_samples
+
+        # initialize or append to the loss history
+        if hasattr(self, "loss_history_"):
+          self.loss_history_.append(loss)
+        else:
+          self.loss_history_ = [loss]
+        
+        return loss
         
 
     def accuracy(self, X, y):
@@ -218,3 +250,26 @@ class GaussianNB:
         X = np.asarray(X, dtype=float)
         y_pred = self.predict(X)
         return np.mean(y_pred == y)
+
+    def save(self, vocab, filename="GaussianNB"):
+      parameters = {
+        "classes": self.classes_.tolist(),
+        "mean": self.mean_.tolist(),
+        "var": self.var_.tolist(),
+        "prios": self.priors_.tolist(),
+        "vocab": vocab
+      }
+
+      # save to a json file format
+      with open("{}.json".format(filename), "w") as f:
+        json.dump(parameters, f)
+    
+    def load(self, filepath="GuassianNB.json"):
+      with open(filepath, "r") as f:
+          parameters = json.load(f)
+
+      self.classes_ = np.array(parameters["classes"])
+      self.mean_ = np.array(parameters["mean"])
+      self.var_ = np.array(parameters["var"])
+      self.priors_ = np.array(parameters["priors"])
+      return parameters["vocab"]

@@ -40,6 +40,7 @@ common_suffixes = {
     "al",   # relating to
     "en",   # made of
 }
+
 prefix_pattern = r"^(?:" + "|".join(re.escape(p) for p in common_prefixes) + r")"
 suffix_pattern = r"(?:" + "|".join(re.escape(s) for s in common_suffixes) + r")$"
 
@@ -52,10 +53,10 @@ def top_k(tokens, k = 10):
     return word_frequencies(tokens).most_common(k)
 
 def remove_stop_words(tokens, stoplist):
-    # remove stop_words (Det, Pronoum etc... ) from tokens 
+    # remove stop_words (Det, Pronoum etc... ) from tokens
     pattern = r"(?:" + "|".join(re.escape(s) for s in stoplist) + r")"
-    tokens = re.sub(pattern, "", " ".join(tokens).split())
-
+    tokens = re.sub(pattern, "", " ".join(tokens)).split()
+    return tokens
 
 def stem(token):
     # réduire un mot à sa racine

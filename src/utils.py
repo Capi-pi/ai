@@ -36,9 +36,9 @@ def confusion_matrix(predictions, test_labels):
     fp = 0
     result = {}
     for y_pred, y in zip(predictions, test_labels):
-        if y_pred == y == 2 : tp += 1
-        elif y_pred == 2 and y == 0: fp += 1
-        elif y_pred == 0 and y == 2: fn += 1
+        if y_pred == y == 1 : tp += 1
+        elif y_pred == 1 and y == 0: fp += 1
+        elif y_pred == 0 and y == 1: fn += 1
         elif y_pred == y == 0: tn += 1
     result["true_positive"] = tp
     result["false_positive"] = fp

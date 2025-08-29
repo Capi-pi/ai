@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="../static/script.js" defer></script>
+    <title>Analyse de Sentiment</title>
+</head>
+<body>
+    <header>
+        <h1 class="headerTitle">Analayse de sentiment ML</h1>
+        <p>Analayser le sentiment de votre texte et visualiser des distribution de probabilité</p>
+    </header>
+    <main>
+        <div class="cercle1">
+        <div class="cercle2"></div></div>
+        <h1>Commencez votre analyse</h1>
+        <p>Saisissez du texte ci-dessous pour analyser le sentiment de vos phrases</p>
+        <p id="result"></p>
+    </main>
+    <form action="/set_model" method="post">
+        <textarea name="text_input" id="userText" placeholder="Saisissez vos phrases ici..." ></textarea>
+        <button id="predictBtn">Prédire</button>
+        <div class="selectContainer">
+            <label for="model">Choisir le modèle :</label>
+            <select name="model" id="model">
+                <option value="" selected disabled>models</option>
+                <option value="logistic">Logistic Regression</option>
+                <option value="naive_bayes">Naive Bayes</option>
+            </select>
+        </div>
+        
+
+    </form>
+
+</body>
+
+</html>
